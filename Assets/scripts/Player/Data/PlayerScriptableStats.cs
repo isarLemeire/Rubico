@@ -557,7 +557,8 @@ namespace PlayerController
         public int MaxHeal = 4;
 
         [Header("RESPAWN")]
-        public GameObject DeathParticleEffect;
+        public float DeathTime = 0.5f;
+        public float DeathDeceleration = 10f;
         public float RespawnTime = 0.5f;
 
         [Header("JUICE")]

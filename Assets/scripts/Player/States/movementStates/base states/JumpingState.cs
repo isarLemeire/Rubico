@@ -16,7 +16,10 @@ namespace PlayerController
             inputHandler.JumpPressed.Clear();
             ctx.grounded.Set(false);
         }
-        public override void Exit() { }
+        public override void Exit() 
+        {
+            controller.animator.ResetTrigger("Jump");
+        }
 
         public override void Update()
         {

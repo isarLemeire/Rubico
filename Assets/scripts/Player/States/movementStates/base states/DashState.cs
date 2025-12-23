@@ -47,6 +47,8 @@ namespace PlayerController
 
         public override void Exit() 
         {
+            controller.animator.ResetTrigger("Dash");
+            controller.animator.ResetTrigger("GroundDash");
             ctx.dashCoolDownTimer = ctx.Stats.DashCooldown;
             ctx.dashBuffer.Set(true);
             ctx.canAttack = true;

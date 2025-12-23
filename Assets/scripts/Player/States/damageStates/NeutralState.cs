@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 
 namespace PlayerController
@@ -10,6 +11,7 @@ namespace PlayerController
 
         public override void Enter()
         {
+            controller.UIanimator.SetInteger("HP", ctx.HP);
         }
         public override void Exit() 
         { 
@@ -21,14 +23,20 @@ namespace PlayerController
 
         public override void FixedUpdate()
         {
-            foreach (var hit in ctx.CollisionHandler.Hits)
+            foreach (var hit in ctx.CollisionHandler.HazardHits)
             {
-                if (hit.collider.CompareTag("Spike") && !ctx.Invulnerable)
+                if (!ctx.Invulnerable)
                 {
                     ctx.lastHazardHit = hit;
-                    damage();
+                    Damage();
                     return;
                 }
+            }
+            if (ctx.heal == ctx.Stats.MaxHeal && ctx.HP < ctx.Stats.MaxHP){
+                ctx.heal = 0;
+                ctx.HP++;
+                controller.UIanimator.SetInteger("HP", ctx.HP);
+                controller.UIanimator.SetInteger("Heal", ctx.heal);
             }
         }
 
@@ -36,18 +44,30 @@ namespace PlayerController
         {
         }
 
-        public void damage()
+        public void Damage()
         {
             ctx.HP--;
+            ctx.heal = 0;
+            controller.UIanimator.SetInteger("Heal", ctx.heal);
             if (ctx.HP <= 0)
             {
-                controller.QueueMovementState(PlayerMovementStateType.Death);
+                Respawn();
             }
             else
             {
                 controller.QueueMovementState(PlayerMovementStateType.Hurt);
                 controller.QueueDamageState(PlayerDamageStateType.Invulnerable);
+                controller.UIanimator.SetInteger("HP", ctx.HP);
             }
+            controller.animator.SetTrigger("Hurt");
+            CameraController.Instance.Shake(ctx.Stats.HitShakeIntensity, ctx.Stats.HitShakeDuration);
+            GameFreezeManager.Instance.Freeze(ctx.Stats.HitFreeze);
+        }
+
+        public void Respawn()
+        {
+            controller.UIanimator.SetInteger("HP", 0);
+            controller.QueueMovementState(PlayerMovementStateType.Death);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace PlayerController
 
         private bool feedback;
         private bool smallFeedback;
+        private bool heal;
         private Coroutine _freezeRoutine;
 
         private AttackType currentAttackType;
@@ -34,6 +35,7 @@ namespace PlayerController
             ctx.canKnockBack = true;
             feedback = false;
             smallFeedback = false;
+            heal = false;
 
             ctx.attackAim = inputHandler.JoyStickAim;
 
@@ -109,6 +111,17 @@ namespace PlayerController
                 feedback = true;
                 GameFreezeManager.Instance.Freeze(ctx.Stats.AttackFreeze);
                 CameraController.Instance.ShakeDirectional(ctx.attackAim, ctx.Stats.AttackShakeIntensity, ctx.Stats.AttackShakeDuration);
+            }
+            if(controller.HitTarget && !heal){
+                foreach (GameObject go in controller.attackHitbox.HitTargets)
+                {
+                    if (go.CompareTag("Enemy"))
+                    {
+                        heal = true;
+                        ctx.heal ++;
+                        controller.UIanimator.SetInteger("Heal", ctx.heal);
+                    }
+                }
             }
             if (controller.HitNonTarget && !smallFeedback)
             {

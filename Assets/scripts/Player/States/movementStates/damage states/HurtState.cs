@@ -12,6 +12,7 @@ namespace PlayerController
         public override void Enter()
         {
             Debug.Log("Hurt");
+            controller.animator.SetTrigger("Hurt");
             stateTimer = ctx.Stats.DamagedTime;
             getKnockback();
 
@@ -24,6 +25,7 @@ namespace PlayerController
         public override void Exit()
         {
             ctx.Invulnerable = false;
+            controller.animator.ResetTrigger("Hurt");
         }
 
         public override void Update()

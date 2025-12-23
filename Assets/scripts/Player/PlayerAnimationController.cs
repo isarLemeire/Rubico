@@ -7,8 +7,8 @@ namespace PlayerController
         [Header("References")]
         [SerializeField] private Transform spriteRoot;    // The transform you flip (your sprite)
         [SerializeField] private Transform playerController;
+        [SerializeField] private Transform HairController;
         private PlayerController controller;
-
 
         private void Awake()
         {

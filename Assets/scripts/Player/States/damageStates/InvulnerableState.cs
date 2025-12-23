@@ -11,8 +11,11 @@ namespace PlayerController
 
         private float _timer;
         private SpriteRenderer sr;
-        private Color baseColor;
-        private Color flashColor; // Dark + transparent
+        private LineRenderer lr;
+        private Color baseBodyColor;
+        private Color flashBodyColor;
+        private Color baseHairColor;
+        private Color flashHairColor;
 
         private bool was_grounded;
 
@@ -22,24 +25,37 @@ namespace PlayerController
             was_grounded = false;
 
             sr = controller._sprite.GetComponent<SpriteRenderer>();
-            baseColor = sr.color;
-            flashColor = new Color(baseColor.r * 0.4f, baseColor.g * 0.4f, baseColor.b * 0.4f, 0.4f);
+            lr = controller._hair.GetComponent<LineRenderer>(); 
+            baseBodyColor = sr.color;
+            baseHairColor = lr.startColor;
+            float dark = 0.3f;
+            flashBodyColor = new Color(
+                baseBodyColor.r * dark,
+                baseBodyColor.g * dark,
+                baseBodyColor.b * dark,
+                1f
+            );
 
-
-
-            CameraController.Instance.Shake(ctx.Stats.HitShakeIntensity, ctx.Stats.HitShakeDuration);
-            GameFreezeManager.Instance.Freeze(ctx.Stats.HitFreeze);
+            flashHairColor = new Color(
+                baseHairColor.r * dark,
+                baseHairColor.g * dark,
+                baseHairColor.b * dark,
+                1f
+            );
         }
         public override void Exit()
         {
-           
-            sr.color = baseColor;
+            sr.color = baseBodyColor;
+            lr.startColor = baseHairColor;
+            lr.endColor = lr.startColor;
         }
 
         public override void Update()
         {
             float t = Mathf.PingPong(_timer * ctx.Stats.FlashFrequency, 1f);
-            sr.color = Color.Lerp(baseColor, flashColor, t);
+            sr.color = Color.Lerp(baseBodyColor, flashBodyColor, t);
+            lr.startColor = Color.Lerp(baseHairColor, flashHairColor, t);
+            lr.endColor   = lr.startColor;
         }
 
         public override void FixedUpdate()
@@ -49,31 +65,32 @@ namespace PlayerController
             {
                 was_grounded = true;
             }
-            if (_timer >= ctx.Stats.InvulnerableTime && was_grounded)
-            {
-                controller.QueueDamageState(PlayerDamageStateType.Neutral);
-                return;
-            }
 
-            if (_timer >= ctx.Stats.InvulnerableAirTime && !was_grounded)
+            foreach (var hit in ctx.CollisionHandler.HazardHits)
             {
-                
-                controller.QueueDamageState(PlayerDamageStateType.Neutral);
-                return;
-            }
-
-            foreach (var hit in ctx.CollisionHandler.Hits)
-            {
-                if (hit.collider.CompareTag("Spike") && !ctx.Invulnerable)
-                {
+                if (!ctx.Invulnerable){
                     ctx.lastHazardHit = hit;
                     controller.QueueMovementState(PlayerMovementStateType.Hurt);
-
+                    controller.animator.SetTrigger("Hurt");
                     CameraController.Instance.Shake(ctx.Stats.InvulnerableIntensity, ctx.Stats.InvulnerableDuration);
                     GameFreezeManager.Instance.Freeze(ctx.Stats.InvulnerableFreeze);
 
                     return;
                 }
+            }
+            
+            
+            if (_timer >= ctx.Stats.InvulnerableTime && was_grounded)
+            {
+                controller.QueueDamageState(PlayerDamageStateType.Neutral);
+                return;
+            }
+        
+            if (_timer >= ctx.Stats.InvulnerableAirTime && !was_grounded)
+            {
+                
+                controller.QueueDamageState(PlayerDamageStateType.Neutral);
+                return;
             }
         }
 

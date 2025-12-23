@@ -6,7 +6,7 @@ namespace PlayerController
     [RequireComponent(typeof(PlayerBoxCollisionHandler))]
     public class PlayerController : MonoBehaviour
     {
-        private PlayerStateContext _ctx;
+        public PlayerStateContext ctx;
         private PlayerInputHandler _inputHandler;
 
         // Serialize fields
@@ -14,6 +14,8 @@ namespace PlayerController
         [SerializeField] private RoomScriptableStats _roomStats;
 
         [SerializeField] public Transform _sprite;
+        [SerializeField] public Transform _hair;
+        [SerializeField] public Transform _HPSprite;
         [SerializeField] public GameObject attackHitBoxObject;
         [SerializeField] public GameObject engageHitBoxObject;
         [SerializeField] private GameObject shockWave;
@@ -21,6 +23,8 @@ namespace PlayerController
 
         public AttackHitbox attackHitbox { get; private set; }
         public Animator animator { get; private set; }
+        public Animator UIanimator { get; private set; }
+
 
         public ShockWaveController shockWaveController { get; private set; }
         public RoomManager roomManager { get; private set; }
@@ -50,22 +54,23 @@ namespace PlayerController
 
         private void Awake()
         {
-            _ctx = new PlayerStateContext(_stats, GetComponent<PlayerBoxCollisionHandler>());
-            _inputHandler = new PlayerInputHandler(_ctx);
+            ctx = new PlayerStateContext(_stats, GetComponent<PlayerBoxCollisionHandler>());
+            _inputHandler = new PlayerInputHandler(ctx);
 
-            _movementMachine = new PlayerStateMachine(_ctx);
-            _attackMachine = new PlayerStateMachine(_ctx);
-            _damageMachine = new PlayerStateMachine(_ctx);
+            _movementMachine = new PlayerStateMachine(ctx);
+            _attackMachine = new PlayerStateMachine(ctx);
+            _damageMachine = new PlayerStateMachine(ctx);
 
-            _movementStateFactory = new PlayerMovementStateFactory(this, _ctx, _inputHandler);
-            _attackStateFactory = new PlayerAttackStateFactory(this, _ctx, _inputHandler);
-            _damageStateFactory = new PlayerDamageStateFactory(this, _ctx, _inputHandler);
+            _movementStateFactory = new PlayerMovementStateFactory(this, ctx, _inputHandler);
+            _attackStateFactory = new PlayerAttackStateFactory(this, ctx, _inputHandler);
+            _damageStateFactory = new PlayerDamageStateFactory(this, ctx, _inputHandler);
 
 
-            checkpoint = new CheckpointManager(_roomStats, transform.position);
+            checkpoint = new CheckpointManager(this, _roomStats, transform.position);
 
             attackHitbox = attackHitBoxObject.GetComponent<AttackHitbox>();
             animator = _sprite.GetComponent<Animator>();
+            UIanimator = _HPSprite.GetComponent<Animator>();
 
             shockWaveController = shockWave.GetComponent<ShockWaveController>();
             roomManager = roomManagerObject.GetComponent<RoomManager>();
@@ -74,16 +79,16 @@ namespace PlayerController
         private void Start()
         {
             // starter states
-            _movementMachine.ChangeState(new IdleState(this, _ctx, _inputHandler));
-            _attackMachine.ChangeState(new NonAttackState(this, _ctx, _inputHandler));
-            _damageMachine.ChangeState(new NeutralState(this, _ctx, _inputHandler));
+            _movementMachine.ChangeState(new IdleState(this, ctx, _inputHandler));
+            _attackMachine.ChangeState(new NonAttackState(this, ctx, _inputHandler));
+            _damageMachine.ChangeState(new NeutralState(this, ctx, _inputHandler));
             faceRight = _inputHandler.FaceRight;
         }
 
         private void Update()
         {
             _inputHandler.Update(Time.deltaTime); // Increment input timers before potentially resetting them
-            _ctx.Update(Time.deltaTime);
+            ctx.Update(Time.deltaTime);
             _inputHandler.Read();
             _attackMachine.Update();
             _movementMachine.Update();
@@ -105,7 +110,7 @@ namespace PlayerController
             _movementMachine.LateFixedUpdate();
             _damageMachine.LateFixedUpdate();
             UpdateFacing();
-            checkpoint.UpdateCheckPoint(transform.position, _ctx.grounded.IsTrue);
+            checkpoint.UpdateCheckPoint(transform.position, ctx.grounded.IsTrue);
         }
 
         public void QueueMovementState(PlayerMovementStateType newState)
@@ -156,7 +161,7 @@ namespace PlayerController
         private void ProcessMovementAndEnvironment()
         {
             Vector3 position = transform.position;
-            _ctx.CollisionHandler.Move(ref position, _ctx.speed, Time.deltaTime);
+            ctx.CollisionHandler.Move(ref position, ctx.speed, Time.deltaTime);
         }
 
         private void UpdateFacing()

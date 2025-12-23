@@ -17,7 +17,9 @@ namespace PlayerController
             inputHandler.JumpPressed.Clear();
             ctx.canDash = true;
         }
-        public override void Exit() { }
+        public override void Exit() {
+            controller.animator.ResetTrigger("WaveDash");
+        }
 
         public override void Update()
         {

@@ -8,6 +8,7 @@ TagManager:
   - Checkpoint
   - HitObject
   - Level
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - AttackHitbox
   - Triggers
   - HittableHazard
-  - 
+  - Hazard
   - 
   - 
   - 

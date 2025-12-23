@@ -4,10 +4,10 @@ using System.Collections.Generic;
 namespace PlayerController
 {
     // NOTE: Assumes PlayerScriptableStats defines:
-    //    public float wallLedgeCorrection; // Used for vertical scoot clearance (Wall) and lateral scoot clearance (Floor)
-    //    public float ceilingLedgeCorrection; // Used for lateral scoot clearance (Ceiling)
-    //    public float scootSpeed;
-    //    public float WallAssistVerticalSpeedThreshold; (optional from previous code)
+    //  public float wallLedgeCorrection; // Used for vertical scoot clearance (Wall) and lateral scoot clearance (Floor)
+    //  public float ceilingLedgeCorrection; // Used for lateral scoot clearance (Ceiling)
+    //  public float scootSpeed;
+    //  public float WallAssistVerticalSpeedThreshold; (optional from previous code)
     //
     // The class focuses on incremental, velocity-driven scooting:
     // - Probe full correction distance to see if that direction can clear collision with the same collider.
@@ -24,6 +24,7 @@ namespace PlayerController
         [SerializeField] private bool _enableLedgeCorrection = true;
 
         [SerializeField] private LayerMask _collisionMask = ~0;
+        [SerializeField] private LayerMask _hazardMask = ~0;
         [SerializeField] private LayerMask _triggerCollisionMask = ~0;
 
         private BoxCollider2D _box;
@@ -33,6 +34,8 @@ namespace PlayerController
         public bool hitWall { get; protected set; }
 
         public List<RaycastHit2D> Hits { get; protected set; } = new List<RaycastHit2D>();
+        public List<RaycastHit2D> TriggerHits { get; protected set; } = new List<RaycastHit2D>();
+        public List<RaycastHit2D> HazardHits { get; protected set; } = new List<RaycastHit2D>();
 
         void Awake()
         {
@@ -48,6 +51,8 @@ namespace PlayerController
         {
             grounded = hitCeiling = hitWall = false;
             Hits.Clear();
+            TriggerHits.Clear();
+            HazardHits.Clear();
 
             Vector3 move = velocity * deltaTime;
             Vector3 originalMove = move;
@@ -55,7 +60,10 @@ namespace PlayerController
             CheckAndResolveAxisCollision(ref position, ref move, Vector3.right, move.x, originalMove, deltaTime);
             CheckAndResolveAxisCollision(ref position, ref move, Vector3.up, move.y, originalMove, deltaTime);
 
-
+            if(HazardHits.Count > 0){
+                grounded = hitCeiling = hitWall = false;
+            }
+            
 
             transform.position = position;
         }
@@ -103,6 +111,7 @@ namespace PlayerController
                     {
                         // Downwards collision (floor/slope) -> attempt horizontal scoots (right then left)
                         resolved = TryFloorScoot(ref position, ref move, hit, preCollisionPosition, distanceToResolve, originalMove, finalMask, centerOffset, boxSize, angle, deltaTime);
+                        UpdateCollisionFlags(hit);
                     }
                 }
                 else if (axis == Vector3.right)
@@ -150,10 +159,12 @@ namespace PlayerController
 
             int selfLayer = gameObject.layer;
             LayerMask finalMask = _collisionMask & ~(1 << selfLayer);
-            LayerMask triggerMask = _triggerCollisionMask & ~(1 << selfLayer);
+            LayerMask hazardMask = _hazardMask;
+            LayerMask triggerMask = _triggerCollisionMask;
 
             // Note: Incomplete trigger gathering is intentionally omitted for brevity here.
-            RaycastHit2D[] allHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, finalMask);
+            RaycastHit2D[] collisionHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, finalMask);
+            RaycastHit2D[] hazardHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, hazardMask);
             RaycastHit2D[] triggerHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, triggerMask);
 
             RaycastHit2D closestSolidHit = default;
@@ -164,10 +175,18 @@ namespace PlayerController
                 if (h.collider == null) continue;
                 if (h.collider.gameObject == gameObject) continue;
 
-                Hits.Add(h);
+                TriggerHits.Add(h);
             }
 
-            foreach (var h in allHits)
+            foreach (var h in hazardHits)
+            {
+                if (h.collider == null) continue;
+                if (h.collider.gameObject == gameObject) continue;
+
+                HazardHits.Add(h);
+            }
+
+            foreach (var h in collisionHits)
             {
                 if (h.collider == null) continue;
                 if (h.collider.gameObject == gameObject) continue;
@@ -228,7 +247,7 @@ namespace PlayerController
 
                     // Block horizontal movement for this frame if collision still remains (scoot was partial)
                     move.x = 0;
-                    Debug.Log($"[Wall Scoot] dir={dir} required={requiredClearance:F4} step={scootStep:F4} distToResolve={distanceToResolve:F4}");
+                    //Debug.Log($"[Wall Scoot] dir={dir} required={requiredClearance:F4} step={scootStep:F4} distToResolve={distanceToResolve:F4}");
                     return true;
                 }
             }
@@ -247,33 +266,33 @@ namespace PlayerController
 
             if (hit.normal.y > 0.9f) return false;
 
-            // Try both right and left
-            Vector2[] candidates = new Vector2[] { Vector2.right, Vector2.left };
+            //Try both right and left
+                Vector2[] candidates = new Vector2[] { Vector2.right, Vector2.left };
 
             foreach (var dir in candidates)
             {
-                // For ceiling scoot, we need lateral clearance first (max ceilingLedgeCorrection),
-                // then ensure vertical path is clear from the scooted position for verticalDistanceToResolve.
-                if (TryDirectionalScoot(preCollisionPosition, dir, _stats.CeilingLedgeCorrection, hit.collider,
-                    finalMask, centerOffset, boxSize, angle,
-                    Vector2.up, verticalDistanceToResolve,
-                    out float requiredClearance))
-                {
-                    // We can scoot in this dir; apply incremental scoot for this frame
-                    float scootStep = Mathf.Min(_stats.ScootSpeed * deltaTime, requiredClearance);
+                    // For ceiling scoot, we need lateral clearance first (max ceilingLedgeCorrection),
+                    // then ensure vertical path is clear from the scooted position for verticalDistanceToResolve.
+                    if (TryDirectionalScoot(preCollisionPosition, dir, _stats.CeilingLedgeCorrection, hit.collider,
+                        finalMask, centerOffset, boxSize, angle,
+                        Vector2.up, verticalDistanceToResolve,
+                        out float requiredClearance))
+                    {
+                    // We can scoot in this dir; apply incremental scoot for this frame
+                    float scootStep = Mathf.Min(_stats.ScootSpeed * deltaTime, requiredClearance);
 
-                    // Apply scoot sideways
-                    position = preCollisionPosition + (Vector3)(dir * scootStep);
+                    // Apply scoot sideways
+                    position = preCollisionPosition + (Vector3)(dir * scootStep);
 
-                    // If scoot fully resolves the collision this frame, also apply the remaining upward move now
-                    if (scootStep >= requiredClearance - _positionEpsilon)
+                    // If scoot fully resolves the collision this frame, also apply the remaining upward move now
+                    if (scootStep >= requiredClearance - _positionEpsilon)
                     {
                         position += Vector3.up * verticalDistanceToResolve;
                     }
 
-                    // Block vertical movement for this frame if collision still remains (scoot was partial)
-                    move.y = 0;
-                    Debug.Log($"[Ceiling Scoot] dir={dir} required={requiredClearance:F4} step={scootStep:F4} verticalResolve={verticalDistanceToResolve:F4}");
+                    // Block vertical movement for this frame if collision still remains (scoot was partial)
+                    move.y = 0;
+                    //Debug.Log($"[Ceiling Scoot] dir={dir} required={requiredClearance:F4} step={scootStep:F4} verticalResolve={verticalDistanceToResolve:F4}");
                     return true;
                 }
             }
@@ -325,7 +344,7 @@ namespace PlayerController
                     move.y = 0;
 
                     
-                    Debug.Log($"[Floor Scoot] dir={dir} required={requiredClearance:F4} step={scootStep:F4} verticalResolve={verticalDistanceToResolve:F4}");
+                    //Debug.Log($"[Floor Scoot] dir={dir} required={requiredClearance:F4} step={scootStep:F4} verticalResolve={verticalDistanceToResolve:F4}");
                     return true;
                 }
             }
@@ -336,21 +355,21 @@ namespace PlayerController
 
         /// <summary>
         /// Generic directional scoot tester that:
-        ///  - Probes the environment by attempting to move 'maxTestDistance' in 'scootDir' from 'preCollisionPosition'.
-        ///  - If that probe finds any clearance, computes the minimum scoot distance required to allow the remainingMovementDir
-        ///     to pass (i.e., a BoxCast in remainingMovementDir with distance 'remainingMovementDistance' should not hit the originalCollider).
-        ///  - Uses a small binary search to compute a tight 'requiredClearance'.
-        ///  - Returns true and the required clearance when possible, otherwise false.
+        /// - Probes the environment by attempting to move 'maxTestDistance' in 'scootDir' from 'preCollisionPosition'.
+        /// - If that probe finds any clearance, computes the minimum scoot distance required to allow the remainingMovementDir
+        ///  to pass (i.e., a BoxCast in remainingMovementDir with distance 'remainingMovementDistance' should not hit the originalCollider).
+        /// - Uses a small binary search to compute a tight 'requiredClearance'.
+        /// - Returns true and the required clearance when possible, otherwise false.
         ///
         /// Parameters:
-        ///  - preCollisionPosition : the position at which the object contacts the blocker before scoot
-        ///  - scootDir : unit vector direction to scoot (up/down/left/right)
-        ///  - maxTestDistance : maximum distance to probe for scoot clearance (wall or ceiling correction)
-        ///  - originalCollider : the collider we want to avoid colliding with after scoot
-        ///  - finalMask, centerOffset, boxSize, angle : geometry used for BoxCasts
-        ///  - remainingMovementDir : direction of the axis we still need to move through (unit vector; e.g., right)
-        ///  - remainingMovementDistance : how far along remainingMovementDir we need to move to finish the attempted axis movement
-        ///  - requiredClearance (out) : minimal scoot distance to clear the original collider for the remaining movement
+        /// - preCollisionPosition : the position at which the object contacts the blocker before scoot
+        /// - scootDir : unit vector direction to scoot (up/down/left/right)
+        /// - maxTestDistance : maximum distance to probe for scoot clearance (wall or ceiling correction)
+        /// - originalCollider : the collider we want to avoid colliding with after scoot
+        /// - finalMask, centerOffset, boxSize, angle : geometry used for BoxCasts
+        /// - remainingMovementDir : direction of the axis we still need to move through (unit vector; e.g., right)
+        /// - remainingMovementDistance : how far along remainingMovementDir we need to move to finish the attempted axis movement
+        /// - requiredClearance (out) : minimal scoot distance to clear the original collider for the remaining movement
         /// </summary>
         private bool TryDirectionalScoot(Vector3 preCollisionPosition,
                                          Vector2 scootDir,

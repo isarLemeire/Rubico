@@ -86,17 +86,19 @@ MonoBehaviour:
   DamageKnockbackSpeedY: 27
   DamageDecelerationTime: 0.5
   DamageTurnAroundDecelerationTime: 0.5
-  FlashFrequency: 4
-  InvulnerableTime: 1
-  InvulnerableAirTime: 2
-  HitFreeze: 0.08
+  FlashFrequency: 5
+  InvulnerableTime: 0.75
+  InvulnerableAirTime: 1.25
+  HitFreeze: 0.2
   HitShakeIntensity: 0.3
-  HitShakeDuration: 0.05
-  InvulnerableFreeze: 0.04
+  HitShakeDuration: 0.1
+  InvulnerableFreeze: 0.1
   InvulnerableIntensity: 0.5
   InvulnerableDuration: 0.025
   MaxHP: 2
   MaxHeal: 4
+  DeathTime: 0.5
+  DeathDeceleration: 10
   DeathParticleEffect: {fileID: 9071806102548662602, guid: 2521a67b13c14ea46aa0e45a74b3710b, type: 3}
   RespawnTime: 0.5
   AttackFreeze: 0.08
