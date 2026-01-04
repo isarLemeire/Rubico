@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
 
     public abstract class MovementBaseState : PlayerStateBase
@@ -242,7 +242,7 @@ namespace PlayerController
         protected void checkKnockBack()
         {
             
-            if (controller.HitTarget && ctx.canKnockBack && Mathf.Abs(ctx.attackAim.x) > 0.1)
+            if (controller.HitTarget && ctx.canKnockBack)
             {
                 controller.QueueMovementState(PlayerMovementStateType.KnockBack);
             }

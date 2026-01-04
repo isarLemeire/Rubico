@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class RunningState : MovementBaseState
     {
@@ -10,11 +10,11 @@ namespace PlayerController
         public override void Enter()
         {
             Debug.Log("Running");
-            controller.animator.SetTrigger("Run");
+            controller.animator.SetBool("Run", true);
         }
         public override void Exit() 
         {
-            controller.animator.ResetTrigger("Run");
+            controller.animator.SetBool("Run", false);
         }
 
         public override void Update() 

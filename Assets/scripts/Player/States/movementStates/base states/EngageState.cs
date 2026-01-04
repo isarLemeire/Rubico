@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class EngageState : MovementBaseState
     {
@@ -42,7 +42,6 @@ namespace PlayerController
         }
         public override void Exit()
         {
-
             if (!ctx.grounded.IsTrue)
                 controller.animator.SetTrigger("FallEnd");
         }
@@ -66,8 +65,6 @@ namespace PlayerController
             }
             if (Mathf.Sign(engageAim.y) > 0)
                 ctx.speed.y = Mathf.Max(engageAim.y, ctx.speed.y - ctx.Stats.JumpGravity * Time.deltaTime);
-
-
         }
 
         public void checkStop(Vector2 distance)
@@ -75,18 +72,16 @@ namespace PlayerController
             if (engageStopped) return;
 
             var col = controller.engageHitBoxObject.GetComponent<BoxCollider2D>();
-
-            // Get the layer mask from your AttackHitbox
-            int mask = controller.attackHitBoxObject.GetComponent<AttackHitbox>().TargetMask;
+            if (col == null) return;
 
             // Build contact filter
             ContactFilter2D filter = new ContactFilter2D();
             filter.useLayerMask = true;
-            filter.layerMask = mask;
-            filter.useTriggers = true; // detect trigger colliders if needed
+            filter.layerMask = ctx.Stats.AttackTargetMask;
+            filter.useTriggers = true; 
 
             // --- 1) Check if we are already inside something ---
-            Collider2D[] overlap = new Collider2D[2];
+            Collider2D[] overlap = new Collider2D[10];
             int overlapCount = col.Overlap(filter, overlap);
 
             if (overlapCount > 0)
@@ -97,10 +92,11 @@ namespace PlayerController
             }
 
             // --- 2) Sweep ahead with Cast ---
+            /*
             float dist = Mathf.Max(distance.magnitude, 0.001f);
             Vector2 dir = distance.normalized;
 
-            RaycastHit2D[] hits = new RaycastHit2D[1];
+            RaycastHit2D[] hits = new RaycastHit2D[10];
             int hitCount = col.Cast(dir, filter, hits, dist);
 
             if (hitCount > 0)
@@ -108,6 +104,7 @@ namespace PlayerController
                 ctx.speed = Vector2.zero;
                 engageStopped = true;
             }
+            */
         }
 
         public override void LateFixedUpdate()

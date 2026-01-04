@@ -7,14 +7,16 @@ public class AttackableObject : MonoBehaviour
     // A flag to indicate if this object was hit during the current physics step.
     public bool IsHitThisFrame { get; private set; } = false;
     public float Damage { get; private set; }
+    public Vector2 AttackDirection { get; private set; }
 
     /// <summary>
     /// Called by the AttackHitbox when a collision is detected.
     /// </summary>
-    public void ReceiveHit(float damage)
+    public void ReceiveHit(float damage, Vector2 attackDirection)
     {
         IsHitThisFrame = true;
         this.Damage = damage;
+        this.AttackDirection = attackDirection;
     }
 
     /// <summary>

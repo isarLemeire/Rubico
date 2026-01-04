@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 551b0d59d64ddf04a87fbebf638e21dc, type: 3}
+  m_Name: PlayerStats
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController.PlayerScriptableStats
+  HorizontalDeadZoneThreshold: 0.3
+  ForgivenessTime: 0.15
+  EnableLedgeCorrection: 1
+  CollisionMask:
+    serializedVersion: 2
+    m_Bits: 1
+  HazardMask:
+    serializedVersion: 2
+    m_Bits: 3072
+  EnemyMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  TriggerCollisionMask:
+    serializedVersion: 2
+    m_Bits: 512
+  AttackTargetMask:
+    serializedVersion: 2
+    m_Bits: 1152
+  AttackNonTargetMask:
+    serializedVersion: 2
+    m_Bits: 1
+  PlayerWidth: 0.4
+  PlayerHeight: 1.4
+  CeilingLedgeCorrection: 0.7
+  WallLedgeCorrection: 0.7
+  FloorLedgeCorrection: 0.4
+  WallAssistVerticalSpeedThreshold: 0.5
+  ScootSpeed: 10
+  MaxMovementSpeed: 9
+  GroundAccelerationTime: 0.1
+  GroundDecelerationTime: 0.05
+  GroundTurnAroundTime: 0.05
+  AirAccelerationTime: 0.2
+  AirDecelerationTime: 0.2
+  AirTurnAroundTime: 0.1
+  MaxJumpHeight: 3.5
+  TimeToMaxFallSpeed: 0.3
+  MaxFallSpeed: 20
+  MaxFallSpeedDown: 28
+  JumpTime: 0.2
+  FloatHeight: 0.4
+  FloatTime: 0.2
+  EarlyReleaseHeight: 0.2
+  EarlyReleaseFloatTime: 0.1
+  DashDistanceX: 3
+  DashDistanceUp: 2.4
+  DashDistanceDown: 3.5
+  DashTime: 0.125
+  DashCooldown: 0.3
+  DashDecelerationTime: 0.05
+  DashAirDecelerationTime: 0.1
+  DashDecelerationTimeNoInput: 0.05
+  DashAirDecelerationTimeNoInput: 0.1
+  DashTurnAroundTime: 0.05
+  DashAirTurnAroundTime: 0.05
+  WavedashSpeedFactor: 0.85
+  WavedashDecelerationTime: 0.7
+  WavedashNoInputDecelerationTime: 0.6
+  WavedashTurnAroundTime: 0.4
+  AttackWidth: 2.1
+  AttackHeight: 0.8
+  AttackStartupTime: 0.15
+  AttackActiveTime: 0.15
+  AttackRecoveryTime: 0.1
+  AttackAnimationTime: 0.33
+  AttackDamage: 1
+  AttackCoolDown: 1
+  engageDistanceX: 1.5
+  engageDistanceDU: 0.9
+  engageDistanceUp: 0.8
+  engageStopDistance: 0.5
+  engageAirDistanceX: 2
+  engageAirDistanceDU: 1.1
+  engageAirDistanceUp: 0.9
+  engageAirDistanceDown: 2.5
+  engageAirDistanceDD: 2.5
+  KnockBackTime: 0.1
+  KnockBackDistance: 1
+  KnockBackAirDistance: 0.5
+  KnockNoInputDecelerationTime: 0.1
+  KnockTurnAroundTime: 0.075
+  KnockAirNoInputDecelerationTime: 0.1
+  KnockAirTurnAroundTime: 0.075
+  PogoHeight: 3.5
+  DiagonalPogoHeight: 3.5
+  HorizonatalPogoHeight: 3.5
+  PogoDecelerationTime: 0.5
+  PogoTurnAroundDecelerationTime: 0.5
+  DamagedTime: 0.1
+  DamageKnockbackDistanceX: 2
+  DamageKnockbackSpeedX: 20
+  DamageKnockbackSpeedY: 27
+  DamageDecelerationTime: 0.5
+  DamageTurnAroundDecelerationTime: 0.5
+  InvulnerableTime: 0.75
+  InvulnerableAirTime: 1.25
+  MaxHP: 2
+  MaxHeal: 4
+  DeathTime: 0.5
+  DeathDeceleration: 10
+  RespawnTime: 0.5

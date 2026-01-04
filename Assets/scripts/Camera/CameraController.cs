@@ -13,10 +13,6 @@ public class CameraController : MonoBehaviour
     [Tooltip("Half-width of horizontal deadzone.")]
     private float xOffset;
     private float yOffset;
-    
-
-    [Header("Shake Settings")]
-    [SerializeField] private float shakeFrequency = 25f; // samples/sec
 
     [SerializeField] private Transform cameraTransform;  // Optional, defaults to main camera
 
@@ -96,16 +92,16 @@ public class CameraController : MonoBehaviour
     }
 
     // Public methods to start shakes
-    public void Shake(float intensity, float duration) => StartShake(Vector2.zero, intensity, duration);
-    public void ShakeDirectional(Vector2 direction, float intensity, float duration) => StartShake(direction.normalized, intensity, duration);
+    public void Shake(float intensity, float duration, float shakeFrequency) => StartShake(Vector2.zero, intensity, duration, shakeFrequency);
+    public void ShakeDirectional(Vector2 direction, float intensity, float duration, float shakeFrequency) => StartShake(direction.normalized, intensity, duration, shakeFrequency);
 
-    private void StartShake(Vector2 direction, float intensity, float duration)
+    private void StartShake(Vector2 direction, float intensity, float duration, float shakeFrequency)
     {
         if (shakeRoutine != null) StopCoroutine(shakeRoutine);
-        shakeRoutine = StartCoroutine(DoShake(direction, intensity, duration));
+        shakeRoutine = StartCoroutine(DoShake(direction, intensity, duration, shakeFrequency));
     }
 
-    private IEnumerator DoShake(Vector2 direction, float intensity, float duration)
+    private IEnumerator DoShake(Vector2 direction, float intensity, float duration, float shakeFrequency)
     {
         float timer = 0f;
         shakeOffset = Vector3.zero;

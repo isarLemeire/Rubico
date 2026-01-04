@@ -1,8 +1,6 @@
 using UnityEngine;
 
-
-
-namespace PlayerController
+namespace Player
 {
     public class InvulnerableState : DamageBaseState
     {
@@ -24,8 +22,8 @@ namespace PlayerController
             _timer = 0;
             was_grounded = false;
 
-            sr = controller._sprite.GetComponent<SpriteRenderer>();
-            lr = controller._hair.GetComponent<LineRenderer>(); 
+            sr = controller.Sprite;
+            lr = controller.HairRenderer;
             baseBodyColor = sr.color;
             baseHairColor = lr.startColor;
             float dark = 0.3f;
@@ -42,17 +40,21 @@ namespace PlayerController
                 baseHairColor.b * dark,
                 1f
             );
+
+            ctx.invulnerable = true;
         }
         public override void Exit()
         {
             sr.color = baseBodyColor;
             lr.startColor = baseHairColor;
             lr.endColor = lr.startColor;
+
+            ctx.invulnerable = false;
         }
 
         public override void Update()
         {
-            float t = Mathf.PingPong(_timer * ctx.Stats.FlashFrequency, 1f);
+            float t = Mathf.PingPong(_timer * ctx.JuiceStats.FlashFrequency, 1f);
             sr.color = Color.Lerp(baseBodyColor, flashBodyColor, t);
             lr.startColor = Color.Lerp(baseHairColor, flashHairColor, t);
             lr.endColor   = lr.startColor;
@@ -67,14 +69,13 @@ namespace PlayerController
             }
 
             foreach (var hit in ctx.CollisionHandler.HazardHits)
-            {
-                if (!ctx.Invulnerable){
+            {                
+                if (!ctx.movement_invulnerable){
                     ctx.lastHazardHit = hit;
                     controller.QueueMovementState(PlayerMovementStateType.Hurt);
                     controller.animator.SetTrigger("Hurt");
-                    CameraController.Instance.Shake(ctx.Stats.InvulnerableIntensity, ctx.Stats.InvulnerableDuration);
-                    GameFreezeManager.Instance.Freeze(ctx.Stats.InvulnerableFreeze);
-
+                    CameraController.Instance.Shake(ctx.JuiceStats.InvulnerableShakeIntensity, ctx.JuiceStats.InvulnerableShakeDuration, ctx.JuiceStats.ShakeFrequency);
+                    GameFreezeManager.Instance.Freeze(ctx.JuiceStats.InvulnerableFreeze);
                     return;
                 }
             }

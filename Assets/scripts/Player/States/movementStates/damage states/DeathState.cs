@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class DeathState : MovementBaseState
     {
@@ -12,25 +12,21 @@ namespace PlayerController
         public override void Enter()
         {
             // Spawn particle effect on death
+            Debug.Log("Death");
             _timer = ctx.Stats.DeathTime;
-            ctx.Invulnerable = true;
+            ctx.movement_invulnerable = true;
+            ctx.DeathInputBlock = true;
 
             getKnockback();
             controller.animator.SetTrigger("Death");
-            
+            controller.animator.SetLayerWeight(1, 0f);
+            controller.QueueAttackState(PlayerAttackStateType.NonAttacking);
         }
         public override void Exit() 
         {
             controller.transform.position = new Vector3(controller.checkpoint.lastCheckpoint.x, controller.checkpoint.lastCheckpoint.y, controller.transform.position.z);
             ctx.speed = Vector3.zero;
-            controller.roomManager.ReloadRoom();
-
-            ctx.Invulnerable = false;
-
-            ctx.HP = ctx.Stats.MaxHP;
-            controller.UIanimator.SetInteger("HP", ctx.HP);
-            controller.animator.SetTrigger("Respawn");
-
+            controller.roomManager.ReloadRoom();            
         }
 
         public override void Update()

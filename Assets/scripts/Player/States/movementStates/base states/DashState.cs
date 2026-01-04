@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class DashState : MovementBaseState
     {
@@ -20,12 +20,6 @@ namespace PlayerController
             controller.QueueAttackState(PlayerAttackStateType.NonAttacking);
             ctx.canAttack = false;
 
-            if (ctx.inputBlock)
-            {
-                ctx.inputBlock = false;
-                inputHandler.Read();
-            }
-
             ctx.dashAim = inputHandler.JoyStickAim;
 
 
@@ -34,8 +28,8 @@ namespace PlayerController
             dashTimer = ctx.Stats.DashTime;
             wavedash = false;
 
-            CameraController.Instance.ShakeDirectional(ctx.dashAim, ctx.Stats.DashShakeIntensity, ctx.Stats.DashShakeDuration);
-            GameFreezeManager.Instance.Freeze(ctx.Stats.DashFreeze);
+            CameraController.Instance.ShakeDirectional(ctx.dashAim, ctx.JuiceStats.DashShakeIntensity, ctx.JuiceStats.DashShakeDuration, ctx.JuiceStats.ShakeFrequency);
+            GameFreezeManager.Instance.Freeze(ctx.JuiceStats.DashFreeze);
 
             if (ctx.grounded.IsActive && ctx.dashAim.y < 0.1)
                 controller.animator.SetTrigger("GroundDash");
@@ -47,8 +41,6 @@ namespace PlayerController
 
         public override void Exit() 
         {
-            controller.animator.ResetTrigger("Dash");
-            controller.animator.ResetTrigger("GroundDash");
             ctx.dashCoolDownTimer = ctx.Stats.DashCooldown;
             ctx.dashBuffer.Set(true);
             ctx.canAttack = true;

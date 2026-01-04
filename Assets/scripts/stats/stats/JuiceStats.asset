@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db4aa9542f8151c4cad5b54a15ff3019, type: 3}
+  m_Name: JuiceStats
+  m_EditorClassIdentifier: Assembly-CSharp::JuiceStats
+  ShakeFrequency: 15
+  AttackFreeze: 0.1
+  AttackShakeIntensity: 0.3
+  AttackShakeDuration: 0.025
+  AttackFreezeNonTarget: 0
+  AttackShakeIntensityNonTarget: 0.15
+  AttackShakeDurationNonTarget: 0.025
+  HitFlashDuration: 0.1
+  DashFreeze: 0.035
+  DashShakeIntensity: 0.1
+  DashShakeDuration: 0.025
+  FlashFrequency: 5
+  HitFreeze: 0.2
+  HitShakeIntensity: 0.3
+  HitShakeDuration: 0.05
+  InvulnerableFreeze: 0.15
+  InvulnerableShakeIntensity: 0.25
+  InvulnerableShakeDuration: 0.04

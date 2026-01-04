@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class HurtState : MovementBaseState
     {
@@ -19,12 +19,12 @@ namespace PlayerController
             ctx.canDash = true;
             ctx.canEngage = true;
             ctx.dashCoolDownTimer = 0f;
-            ctx.Invulnerable = true;
+            ctx.movement_invulnerable = true;
         }
 
         public override void Exit()
         {
-            ctx.Invulnerable = false;
+            ctx.movement_invulnerable = false;
             controller.animator.ResetTrigger("Hurt");
         }
 

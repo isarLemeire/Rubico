@@ -1,14 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace PlayerController
+namespace Player
 {
-    public interface IPlayerAttackStateFactory
-    {
-        AttackBaseState GetState(PlayerAttackStateType type);
-    }
-
-    public class PlayerAttackStateFactory : IPlayerAttackStateFactory
+    public class PlayerAttackStateFactory : IStateFactory<PlayerAttackStateType>
     {
         private readonly PlayerController controller;
         private readonly PlayerStateContext ctx;
@@ -29,6 +24,6 @@ namespace PlayerController
             };
         }
 
-        public AttackBaseState GetState(PlayerAttackStateType type) => stateCache[type];
+        public State GetState(PlayerAttackStateType type) => stateCache[type];
     }
 }

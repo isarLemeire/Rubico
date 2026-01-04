@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
 
     public abstract class DamageBaseState : PlayerStateBase

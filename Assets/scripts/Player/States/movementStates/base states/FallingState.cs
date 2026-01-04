@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class FallingState : MovementBaseState
     {
@@ -14,7 +14,7 @@ namespace PlayerController
 
         public override void Exit() 
         {
-            controller.animator.ResetTrigger("Fall");
+            controller.animator.SetBool("Fall", false);
         }
 
         public override void Update()
@@ -30,7 +30,8 @@ namespace PlayerController
             ctx.speed.y = ApplyGravity(ctx.speed.y, Time.deltaTime, inputHandler.JoyStickAim.y < -0.1);
 
             if (ctx.speed.y <= 0)
-                controller.animator.SetTrigger("Fall");
+                controller.animator.SetBool("Fall", true);
+                
 
             // horizontal move
             UpdateMoveSpeed(

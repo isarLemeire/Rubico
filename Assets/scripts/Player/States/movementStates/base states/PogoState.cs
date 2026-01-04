@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class PogoState : MovementBaseState
     {
@@ -13,9 +13,10 @@ namespace PlayerController
         {
             
             Debug.Log("Pogo");
-            //controller.animator.SetTrigger("WaveDash");
             ctx.canDash = true;
             ctx.canEngage = true;
+
+            // vertical
             if (ctx.attackAim.y <= -0.9)
             {
                 ctx.speed.y = ctx.Stats.PogoSpeed;
@@ -23,12 +24,13 @@ namespace PlayerController
             }
             else
             {
+                // diagonal
                 if (Mathf.Abs(Mathf.Abs(ctx.attackAim.y) - Mathf.Abs(ctx.attackAim.x)) <= 0.1)
                 {
                     ctx.speed.y = ctx.Stats.DiagonalPogoSpeed;
-                    ctx.speed.x = ctx.Stats.MaxMovementSpeed * Mathf.Sign(ctx.attackAim.x);//Mathf.Max(ctx.Stats.MaxMovementSpeed, Mathf.Abs(ctx.speed.x)) * Mathf.Sign(ctx.attackAim.x);
-                    //ctx.speed.x = Mathf.Sign(ctx.attackAim.x) * ctx.Stats.maxMovementSpeed;
+                    ctx.speed.x = ctx.Stats.MaxMovementSpeed * Mathf.Sign(ctx.attackAim.x);
                 }
+                // horizontal
                 else
                 {
                     ctx.speed.y = ctx.Stats.HorizonalPogoSpeed;
@@ -40,7 +42,7 @@ namespace PlayerController
         }
         public override void Exit() 
         {
-            controller.animator.ResetTrigger("Fall");
+            controller.animator.SetBool("Fall", false);
         }
 
         public override void Update()
@@ -64,7 +66,7 @@ namespace PlayerController
                 Time.deltaTime);
 
             if (ctx.speed.y <= 0)
-                controller.animator.SetTrigger("Fall");
+                controller.animator.SetBool("Fall", true);
         }
 
         public override void LateFixedUpdate()

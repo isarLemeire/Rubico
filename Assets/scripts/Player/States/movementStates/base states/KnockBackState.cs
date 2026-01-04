@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class KnockBackState : MovementBaseState
     {
@@ -13,7 +13,15 @@ namespace PlayerController
         {
             Debug.Log("Knock back");
             ctx.canKnockBack = false;
-            ctx.speed.x = -1f * Mathf.Sign(ctx.attackAim.x) * ctx.Stats.KnockBackSpeed;
+            if(Mathf.Abs(ctx.attackAim.x) > 0.1f){
+                if (ctx.grounded.IsTrue)
+                    ctx.speed.x = -1f * Mathf.Sign(ctx.attackAim.x) * ctx.Stats.KnockBackSpeed;
+                else
+                    ctx.speed.x = -1f * Mathf.Sign(ctx.attackAim.x) * ctx.Stats.KnockBackAirSpeed;
+            }
+            if(ctx.speed.y >= 0 && ctx.attackAim.y > 0)
+                ctx.speed.y = 0;
+
             knockBackTimer = 0;
         }
         public override void Exit()

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class WavedashState : MovementBaseState
     {
@@ -13,10 +13,11 @@ namespace PlayerController
             controller.animator.SetTrigger("WaveDash");
             Debug.Log("WaveDash");
             ctx.speed.y = ctx.Stats.JumpSpeed;
-            ctx.speed.x = Mathf.Sign(ctx.speed.x) * ctx.Stats.WavedashSpeed;
+            ctx.speed.x = Mathf.Sign(ctx.dashAim.x) * ctx.Stats.WavedashSpeed;
             inputHandler.JumpPressed.Clear();
             ctx.canDash = true;
         }
+
         public override void Exit() {
             controller.animator.ResetTrigger("WaveDash");
         }

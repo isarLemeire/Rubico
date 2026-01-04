@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace PlayerController
+namespace Player
 {
     public class PlayerInputHandler
     {
@@ -37,18 +37,22 @@ namespace PlayerController
 
         public void Read()
         {
-            if (!_ctx.inputBlock)
-            {
-                MoveX = getMoveX();
-                JoyStickAim = correctAim(SnapAim(_moveAction.ReadValue<Vector2>()));
-                UpdateFaceRight();
-            }
-
+            if (_ctx.DeathInputBlock)
+                return;
 
             JumpPressed.Set(_jumpAction.WasPressedThisFrame());
             JumpHeld = _jumpAction.IsPressed();
             DashPressed.Set(_dashAction.WasPressedThisFrame());
             AttackPressed.Set(_attackAction.WasPressedThisFrame());
+
+            if (_ctx.attackInputBlock)
+                return;
+
+            MoveX = getMoveX();
+            JoyStickAim = correctAim(SnapAim(_moveAction.ReadValue<Vector2>()));
+            UpdateFaceRight();
+
+
         }
 
         public void Update(float deltaTime)

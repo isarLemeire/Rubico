@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;   
 
 
-namespace PlayerController
+namespace Player
 {
     public class NeutralState : DamageBaseState
     {
@@ -23,9 +24,13 @@ namespace PlayerController
 
         public override void FixedUpdate()
         {
-            foreach (var hit in ctx.CollisionHandler.HazardHits)
+            List<RaycastHit2D> hits = new List<RaycastHit2D>();
+            hits.AddRange(ctx.CollisionHandler.EnemyHits);
+            hits.AddRange(ctx.CollisionHandler.HazardHits);
+            
+            foreach (var hit in hits)
             {
-                if (!ctx.Invulnerable)
+                if (!ctx.movement_invulnerable)
                 {
                     ctx.lastHazardHit = hit;
                     Damage();
@@ -60,8 +65,8 @@ namespace PlayerController
                 controller.UIanimator.SetInteger("HP", ctx.HP);
             }
             controller.animator.SetTrigger("Hurt");
-            CameraController.Instance.Shake(ctx.Stats.HitShakeIntensity, ctx.Stats.HitShakeDuration);
-            GameFreezeManager.Instance.Freeze(ctx.Stats.HitFreeze);
+            CameraController.Instance.Shake(ctx.JuiceStats.HitShakeIntensity, ctx.JuiceStats.HitShakeDuration, ctx.JuiceStats.ShakeFrequency);
+            GameFreezeManager.Instance.Freeze(ctx.JuiceStats.HitFreeze);
         }
 
         public void Respawn()

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class RespawnState : MovementBaseState
     {
@@ -12,13 +12,18 @@ namespace PlayerController
         public override void Enter()
         {
             Debug.Log("Respawn");
-            controller.animator.SetTrigger("Idle");
             respawnTimer = 0;
+
+            
+            ctx.HP = ctx.Stats.MaxHP;
+            controller.UIanimator.SetInteger("HP", ctx.HP);
+            controller.animator.SetTrigger("Respawn");
         }
 
         public override void Exit()
         {
-
+            ctx.DeathInputBlock = false;
+            ctx.movement_invulnerable = false;
         }
 
         public override void Update()

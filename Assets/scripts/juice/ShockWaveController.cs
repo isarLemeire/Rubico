@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class ShockWaveController : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace PlayerController
+namespace Player
 {
     // NOTE: Assumes PlayerScriptableStats defines:
     //  public float wallLedgeCorrection; // Used for vertical scoot clearance (Wall) and lateral scoot clearance (Floor)
@@ -21,11 +21,6 @@ namespace PlayerController
         private const float _skinWidth = 0.01f;
 
         [SerializeField] private PlayerScriptableStats _stats;
-        [SerializeField] private bool _enableLedgeCorrection = true;
-
-        [SerializeField] private LayerMask _collisionMask = ~0;
-        [SerializeField] private LayerMask _hazardMask = ~0;
-        [SerializeField] private LayerMask _triggerCollisionMask = ~0;
 
         private BoxCollider2D _box;
 
@@ -36,6 +31,7 @@ namespace PlayerController
         public List<RaycastHit2D> Hits { get; protected set; } = new List<RaycastHit2D>();
         public List<RaycastHit2D> TriggerHits { get; protected set; } = new List<RaycastHit2D>();
         public List<RaycastHit2D> HazardHits { get; protected set; } = new List<RaycastHit2D>();
+        public List<RaycastHit2D> EnemyHits { get; protected set; } = new List<RaycastHit2D>();
 
         void Awake()
         {
@@ -53,6 +49,7 @@ namespace PlayerController
             Hits.Clear();
             TriggerHits.Clear();
             HazardHits.Clear();
+            EnemyHits.Clear();  
 
             Vector3 move = velocity * deltaTime;
             Vector3 originalMove = move;
@@ -60,6 +57,7 @@ namespace PlayerController
             CheckAndResolveAxisCollision(ref position, ref move, Vector3.right, move.x, originalMove, deltaTime);
             CheckAndResolveAxisCollision(ref position, ref move, Vector3.up, move.y, originalMove, deltaTime);
 
+            
             if(HazardHits.Count > 0){
                 grounded = hitCeiling = hitWall = false;
             }
@@ -97,7 +95,7 @@ namespace PlayerController
 
 
             // If scoot logic is enabled, attempt scoot
-            if (_enableLedgeCorrection && distanceToResolve > 0.0001f)
+            if (_stats.EnableLedgeCorrection && distanceToResolve > 0.0001f)
             {
                 bool resolved = false;
                 if (axis == Vector3.up)
@@ -158,14 +156,13 @@ namespace PlayerController
             float distance = Mathf.Abs(axisMovement) + _skinWidth;
 
             int selfLayer = gameObject.layer;
-            LayerMask finalMask = _collisionMask & ~(1 << selfLayer);
-            LayerMask hazardMask = _hazardMask;
-            LayerMask triggerMask = _triggerCollisionMask;
+            LayerMask finalMask = _stats.CollisionMask & ~(1 << selfLayer);
 
             // Note: Incomplete trigger gathering is intentionally omitted for brevity here.
             RaycastHit2D[] collisionHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, finalMask);
-            RaycastHit2D[] hazardHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, hazardMask);
-            RaycastHit2D[] triggerHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, triggerMask);
+            RaycastHit2D[] hazardHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, _stats.HazardMask);
+            RaycastHit2D[] enemyHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, _stats.EnemyMask);
+            RaycastHit2D[] triggerHits = Physics2D.BoxCastAll(origin, boxSize, angle, direction, distance, _stats.TriggerCollisionMask);
 
             RaycastHit2D closestSolidHit = default;
             float closestDistance = float.MaxValue;
@@ -184,6 +181,14 @@ namespace PlayerController
                 if (h.collider.gameObject == gameObject) continue;
 
                 HazardHits.Add(h);
+            }
+
+            foreach (var h in enemyHits)
+            {
+                if (h.collider == null) continue;
+                if (h.collider.gameObject == gameObject) continue;
+
+                EnemyHits.Add(h);
             }
 
             foreach (var h in collisionHits)

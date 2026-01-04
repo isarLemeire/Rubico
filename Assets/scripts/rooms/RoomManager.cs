@@ -125,6 +125,7 @@ public class RoomManager : MonoBehaviour
         if (rooms.ContainsKey(roomCoord))
         {
             // 1. Destroy the old instance
+            rooms[roomCoord].SetActive(false);
             Destroy(rooms[roomCoord]);
             rooms.Remove(roomCoord);
 

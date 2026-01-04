@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace PlayerController
+namespace Player
 {
     public enum PlayerMovementStateType
     {
@@ -41,10 +41,10 @@ namespace PlayerController
             { PlayerMovementStateType.Respawning, 101 },
             { PlayerMovementStateType.Death, 100 },
             { PlayerMovementStateType.Hurt, 90 },
-            { PlayerMovementStateType.Pogoing, 86 },
-            { PlayerMovementStateType.KnockBack, 85 },
-            { PlayerMovementStateType.Wavedashing, 81 },
             { PlayerMovementStateType.Dashing, 80 },
+            { PlayerMovementStateType.Pogoing, 76 },
+            { PlayerMovementStateType.KnockBack, 75 },
+            { PlayerMovementStateType.Wavedashing, 71 },
             { PlayerMovementStateType.Jumping, 60 },
             { PlayerMovementStateType.Engaging, 55 },
             { PlayerMovementStateType.Falling, 50 },
@@ -56,7 +56,7 @@ namespace PlayerController
         {
             { PlayerAttackStateType.ComboAttacking, 51 },
             { PlayerAttackStateType.Attacking, 50 },
-            { PlayerAttackStateType.NonAttacking, 0 },
+            { PlayerAttackStateType.NonAttacking, 55 },
         };
 
         public static readonly Dictionary<PlayerDamageStateType, int> DamagePriority = new()

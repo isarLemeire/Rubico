@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace PlayerController
+namespace Player
 {
     public class IdleState : MovementBaseState
     {
@@ -10,11 +10,11 @@ namespace PlayerController
         public override void Enter()
         {
             Debug.Log("Idle");
-            controller.animator.SetTrigger("Idle");
+            controller.animator.SetBool("Idle", true);
         }
         public override void Exit() 
         {
-            controller.animator.ResetTrigger("Idle");
+            controller.animator.SetBool("Idle", false);
         }
 
         public override void Update()
