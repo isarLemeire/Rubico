@@ -148,7 +148,6 @@ namespace Player
             {
                 controller.animator.SetLayerWeight(1, 0f);
                 controller.QueueAttackState(PlayerAttackStateType.NonAttacking);
-                controller.QueueMovementState(PlayerMovementStateType.Idle);
             }
             if (canTransition && ctx.grounded.IsActive)
             {

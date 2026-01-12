@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2367171255335188577}
   - component: {fileID: 2222663684082547522}
   - component: {fileID: 6907730940172819674}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: FixedScaleCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ GameObject:
   - component: {fileID: 6016933986546111877}
   - component: {fileID: 1354370235611026059}
   - component: {fileID: 7145481637899274797}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,8 +137,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 43.5, y: -42.4}
-  m_SizeDelta: {x: 85, y: 85}
+  m_AnchoredPosition: {x: 36.5, y: -36.4}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6016933986546111877
 CanvasRenderer:
@@ -212,7 +212,7 @@ GameObject:
   - component: {fileID: 817158691869839788}
   - component: {fileID: 2162871206937271166}
   - component: {fileID: 8251696034485914911}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: ScaleableCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -313,7 +313,7 @@ GameObject:
   - component: {fileID: 3839445830639071399}
   - component: {fileID: 2417851312069361178}
   - component: {fileID: 5312205896211051270}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -390,9 +390,9 @@ GameObject:
   - component: {fileID: 5370828338154688376}
   - component: {fileID: 5621718426746253811}
   - component: {fileID: 4570770878669365119}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Main Camera
-  m_TagString: HitObject
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -424,7 +424,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215688, g: 0.40421116, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.1254902, g: 0.60784316, b: 0.909804, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -432,7 +432,7 @@ Camera:
   m_ShutterSpeed: 0.005
   m_Aperture: 16
   m_FocusDistance: 10
-  m_FocalLength: 50
+  m_FocalLength: 26.577053
   m_BladeCount: 5
   m_Curvature: {x: 2, y: 11}
   m_BarrelClipping: 0.25
@@ -447,8 +447,8 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
-  orthographic: 1
+  field of view: 48.6
+  orthographic: 0
   orthographic size: 8.997805
   m_Depth: -1
   m_CullingMask:
@@ -487,6 +487,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   playerTarget: {fileID: 0}
   _stats: {fileID: 11400000, guid: 2007eba5c3de62c499b0af23b9a211a4, type: 2}
+  xOffset: 0
+  yOffset: 0
   cameraTransform: {fileID: 6778293648590540023}
 --- !u!114 &4570770878669365119
 MonoBehaviour:

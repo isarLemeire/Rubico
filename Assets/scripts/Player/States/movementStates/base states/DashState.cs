@@ -36,7 +36,7 @@ namespace Player
             else
                 controller.animator.SetTrigger("Dash");
 
-            controller.shockWaveController.callShockWave(controller.transform.position, ctx.dashAim);
+            //controller.shockWaveController.callShockWave(controller.transform.position, ctx.dashAim);
         }
 
         public override void Exit() 

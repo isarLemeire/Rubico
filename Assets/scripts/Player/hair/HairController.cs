@@ -8,6 +8,7 @@ public class HairController : MonoBehaviour
     public float segmentLength = 0.1f;
     [Range(0f, 1f)]
     public float damping = 0.9f;
+    public float Z_offset = 0.1f;
 
     [Header("Gravity Settings")]
     public float gravityScale = 0.3f;
@@ -40,7 +41,7 @@ public class HairController : MonoBehaviour
         positions = new Vector3[segmentCount];
         prevPositions = new Vector3[segmentCount];
 
-        Vector3 start = headTarget.position;
+        Vector3 start = new Vector3(headTarget.position.x, headTarget.position.y, Z_offset);
         for (int i = 0; i < segmentCount; i++)
         {
             positions[i] = start - Vector3.up * (segmentLength * i);
@@ -51,8 +52,8 @@ public class HairController : MonoBehaviour
     void LateUpdate()
     {
         // keep root fixed
-        positions[0] = headTarget.position;
-        prevPositions[0] = headTarget.position;
+        positions[0] = new Vector3(headTarget.position.x, headTarget.position.y, Z_offset);
+        prevPositions[0] = new Vector3(headTarget.position.x, headTarget.position.y, Z_offset);
 
         Simulate();
         ApplyConstraints();
@@ -78,7 +79,7 @@ public class HairController : MonoBehaviour
         for (int iteration = 0; iteration < 4; iteration++)
         {
             // re-anchor root
-            positions[0] = headTarget.position;
+            positions[0] = new Vector3(headTarget.position.x, headTarget.position.y, Z_offset);
 
             for (int i = 1; i < segmentCount; i++)
             {
@@ -101,7 +102,7 @@ public class HairController : MonoBehaviour
                 positions[i - 1] += dir * diff * 0.5f;
             }
 
-            positions[0] = headTarget.position; // lock again
+            positions[0] = new Vector3(headTarget.position.x, headTarget.position.y, Z_offset); // lock again
         }
     }
 

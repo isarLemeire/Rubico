@@ -11,8 +11,8 @@ public class CameraController : MonoBehaviour
 
     [SerializeField] private RoomScriptableStats _stats;
     [Tooltip("Half-width of horizontal deadzone.")]
-    private float xOffset;
-    private float yOffset;
+    [SerializeField] private float xOffset;
+    [SerializeField] private float yOffset;
 
     [SerializeField] private Transform cameraTransform;  // Optional, defaults to main camera
 
@@ -37,13 +37,15 @@ public class CameraController : MonoBehaviour
 
         DesiredPosition = cameraTransform.position;
 
-        xOffset = _stats.RoomWidth / 2f;
-        yOffset = _stats.RoomHeight / 2f;
+        //xOffset = _stats.RoomWidth / 2f;
+        //yOffset = _stats.RoomHeight / 2f;
     }
 
     private void Update()
     {
-        UpdateDesiredPosition();
+        //UpdateDesiredPosition();
+        UpdateSmoothDesiredPosition();
+        //DesiredPosition = new Vector3(playerTarget.position.x, playerTarget.position.y, transform.position.z);
     }
 
     private void LateUpdate()
@@ -85,8 +87,8 @@ public class CameraController : MonoBehaviour
         else if (playerPos.x < camPos.x - xOffset) camPos.x = playerPos.x + xOffset;
 
         // Vertical deadzone
-        if (playerPos.y > camPos.y + yOffset) camPos.y = playerPos.y - yOffset;
-        else if (playerPos.y < camPos.y - yOffset) camPos.y = playerPos.y + yOffset;
+        //if (playerPos.y > camPos.y + yOffset) camPos.y = playerPos.y - yOffset;
+        //else if (playerPos.y < camPos.y - yOffset) camPos.y = playerPos.y + yOffset;
 
         DesiredPosition = camPos;
     }

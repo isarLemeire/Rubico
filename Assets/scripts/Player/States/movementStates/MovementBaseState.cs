@@ -229,8 +229,9 @@ namespace Player
 
         protected void returnToDefaultGroundState()
         {
-            if (Mathf.Abs(inputHandler.MoveX) < 0.1)
+            if (Mathf.Abs(inputHandler.MoveX) < 0.1 && Mathf.Abs(ctx.speed.x) < 0.1)
             {
+                
                 controller.QueueMovementState(PlayerMovementStateType.Idle);
             }
             else

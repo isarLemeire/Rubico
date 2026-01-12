@@ -63,6 +63,10 @@ namespace Player
             {
                 returnToDefaultState();
             }
+            if ((engageAim.y < 0f) && ctx.grounded.IsTrue)
+            {
+                returnToDefaultState();
+            }
             if (Mathf.Sign(engageAim.y) > 0)
                 ctx.speed.y = Mathf.Max(engageAim.y, ctx.speed.y - ctx.Stats.JumpGravity * Time.deltaTime);
         }
@@ -90,21 +94,6 @@ namespace Player
                 engageStopped = true;
                 return;
             }
-
-            // --- 2) Sweep ahead with Cast ---
-            /*
-            float dist = Mathf.Max(distance.magnitude, 0.001f);
-            Vector2 dir = distance.normalized;
-
-            RaycastHit2D[] hits = new RaycastHit2D[10];
-            int hitCount = col.Cast(dir, filter, hits, dist);
-
-            if (hitCount > 0)
-            {
-                ctx.speed = Vector2.zero;
-                engageStopped = true;
-            }
-            */
         }
 
         public override void LateFixedUpdate()
